@@ -1,0 +1,17 @@
+﻿{
+  "name": "cocuk-takip-backend",
+  "version": "1.0.0",
+  "main": "server.js",
+  "scripts": { "start": "node server.js" },
+  "dependencies": {
+    "express": "^4.19.2",
+    "pg": "^8.11.5",
+    "jsonwebtoken": "^9.0.2",
+    "multer": "^1.4.5-lts.1",
+    "bcryptjs": "^2.4.3",
+    "aws-sdk": "^2.1600.0",
+    "dotenv": "^16.4.5",
+    "cors": "^2.8.5",
+    "ws": "^8.17.0"
+  }
+}
