@@ -1,4 +1,4 @@
-﻿require('dotenv').config();
+require('dotenv').config();
 const express = require('express');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
@@ -14,6 +14,7 @@ const app = express();
 app.use(cors());
 app.use(express.json({ limit: '2mb' }));
 
+// R2 (Cloudflare) Yapılandırması
 const s3 = new AWS.S3({
   endpoint: process.env.R2_ENDPOINT,
   accessKeyId: process.env.R2_ACCESS_KEY,
@@ -22,6 +23,7 @@ const s3 = new AWS.S3({
   signatureVersion: 'v4'
 });
 
+// --- HTTP API ROTALARI ---
 app.post('/api/register', async (req, res) => {
   const { email, password, role, name } = req.body;
   if (!['parent', 'child'].includes(role)) return res.status(400).json({ error: 'rol hatali' });
@@ -93,9 +95,10 @@ app.get('/api/audio/:id/url', requireAuth, requireParent, async (req, res) => {
   res.json({ url });
 });
 
+// Test için ana sayfa
 app.get('/', (req, res) => res.send('cocuk-takip-backend calisiyor'));
 
-// --- WEBSOCKET (CANLI DINLEME) ---
+// --- WEBSOCKET (CANLI DİNLEME) ---
 const server = http.createServer(app);
 const wss = new WebSocket.Server({ server });
 const rooms = {};
@@ -124,5 +127,10 @@ wss.on('connection', (ws, req) => {
   });
 });
 
-const PORT = process.env.PORT || 3000;
-init().then(() => server.listen(PORT, () => console.log(`Sunucu ${PORT} (WebSocket Aktif)`)));
+// --- SUNUCUYU BAŞLATMA (SUGA UYUMLU) ---
+const PORT = 3000;
+init().then(() => {
+  server.listen(PORT, '0.0.0.0', () => {
+    console.log(`Sunucu ${PORT} portunda calisiyor (WebSocket Aktif)`);
+  });
+});
